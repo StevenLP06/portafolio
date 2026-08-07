@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Steven López Parra — Desarrollador Web &amp; Administrador de Sistemas</title>
+    <meta
+      name="description"
+      content="Portafolio de Steven López Parra, estudiante de Administración de Sistemas Informáticos. Desarrollo web, redes, cloud y automatización con IA."
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Steven López Parra — Desarrollador Web & Administrador de Sistemas" />
+    <meta
+      property="og:description"
+      content="Portafolio de Steven López Parra: proyectos de desarrollo web, redes, cloud y automatización con IA."
+    />
+    <!-- TODO(Steven): agregar imagen de portada real y descomentar la línea de abajo -->
+    <!-- <meta property="og:image" content="/og-cover.png" /> -->
+
+    <!-- Fuentes: font-display swap para rendimiento -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <!--
+      Anti-flash de tema: se ejecuta de forma síncrona antes del primer paint
+      para aplicar la clase 'dark' sin que el usuario vea un parpadeo del tema
+      incorrecto. Debe mantenerse en sincronía con la clave 'theme' que usa
+      src/hooks/useTheme.js.
+    -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var isDark = stored ? stored === 'dark' : prefersDark;
+          document.documentElement.classList.toggle('dark', isDark);
+        } catch (e) {
+          /* localStorage no disponible: se mantiene el tema por defecto */
+        }
+      })();
+    </script>
+  </head>
+  <body class="bg-bg-light dark:bg-bg font-body text-ink-light dark:text-ink transition-colors duration-300">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
