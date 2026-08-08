@@ -1,7 +1,6 @@
 /**
  * 'file' apunta a /public/certificados/, por lo que en producción queda
  * disponible en la raíz del build (ver estructura de carpetas, sección 6.1).
- * Steven debe colocar los PDFs reales con estos mismos nombres de archivo.
  */
 export const certifications = [
   {
