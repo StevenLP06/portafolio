@@ -8,8 +8,7 @@ export default function Hero() {
       <div>
         <p className="font-mono text-sm text-cyan">/inicio</p>
         <h1 className="mt-4 font-display text-4xl font-semibold leading-tight text-ink-light dark:text-ink sm:text-5xl">
-          Hola, soy Steven — desarrollador web/software y Administrador de Sistemas
-          Informáticos en formación.
+          Hola, soy Steven — desarrollador web y de software
         </h1>
         <p className="mt-5 max-w-lg text-base text-ink-light-dim dark:text-ink-dim sm:text-lg">
           Construyo productos web, redes y flujos automatizados, y estoy aprendiendo a

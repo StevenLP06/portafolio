@@ -18,14 +18,7 @@ export default function AboutMe() {
         <div className="space-y-5 text-base leading-relaxed text-ink-light-dim dark:text-ink-dim">
           <p>
             Soy Steven López Parra, estudiante de octavo semestre de Administración de
-            Sistemas Informáticos en la Universidad Nacional de Colombia. Me interesa el
-            desarrollo web y de software, la administración de infraestructura, la
-            automatización de procesos con herramientas de inteligencia artificial, las
-            tecnologías en la nube —en especial AWS— y toda la cultura DevOps para
-            automatizar flujos de trabajo, pruebas, despliegues y calidad en el código.
-          </p>
-          <p>
-            He trabajado en proyectos académicos de redes y virtualización (topologías
+            Sistemas Informáticos en la Universidad Nacional de Colombia. He trabajado en proyectos académicos de redes y virtualización (topologías
             completas en GNS3 con VLANs, DHCP, NAT y DMZ), desarrollo backend con Python y
             consumo de APIs, y actualmente estoy fortaleciendo mis habilidades de frontend y
             gestión web (HTML, CSS, JavaScript y WordPress). Además, he utilizado Laravel
