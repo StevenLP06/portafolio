@@ -20,7 +20,7 @@ export default function Terminal() {
 
       <div className="space-y-3 px-4 py-4">
         {renderedBlocks.map((block, index) => (
-          <div key={terminalCommands[index].command}>
+          <div key={index}>
             <p className="text-ink-light dark:text-ink">
               <span className="text-cyan">➜</span> {block.command}
               {!block.commandDone && !isDone && (
@@ -28,8 +28,8 @@ export default function Terminal() {
               )}
             </p>
             {block.outVisible &&
-              block.out.map((line) => (
-                <p key={line} className="pl-4 text-ink-light-dim dark:text-ink-dim">
+              block.out.map((line, lineIndex) => (
+                <p key={lineIndex} className="pl-4 text-ink-light-dim dark:text-ink-dim">
                   {line}
                 </p>
               ))}

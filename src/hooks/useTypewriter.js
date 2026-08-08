@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 const CHAR_DELAY_MS = 45; // dentro del rango 40-50ms/carácter pedido en la spec
 const OUT_PAUSE_MS = 300; // pequeña pausa antes de mostrar la línea de salida
@@ -16,76 +16,117 @@ function prefersReducedMotion() {
  * alargar la animación). Se reproduce una sola vez al montar (sección 9,
  * criterios de aceptación) y respeta prefers-reduced-motion mostrando todo
  * el contenido de inmediato sin animar.
+ * 
+ * IMPORTANTE: renderedBlocks se construye de forma progresiva (solo incluye
+ * los bloques que ya empezaron a teclearse) para que la terminal "crezca"
+ * línea por línea, en vez de reservar el espacio final desde el montaje.
  *
  * @param {Array<{command: string, out: string[]}>} blocks
  * @returns {{ renderedBlocks: Array, isDone: boolean, showCursor: boolean }}
  */
 export function useTypewriter(blocks) {
-  const [renderedBlocks, setRenderedBlocks] = useState([]);
+  const reducedMotion = useRef(prefersReducedMotion());
+  const [progress, setProgress] = useState({ blockIndex: 0, charCount: 0, outVisible: false });
   const [isDone, setIsDone] = useState(false);
   const timeoutRef = useRef(null);
 
   useEffect(() => {
     // Modo estático: sin animación, todo el contenido visible de inmediato.
-    if (prefersReducedMotion()) {
-      setRenderedBlocks(
-        blocks.map((b) => ({ command: b.command, out: b.out, commandDone: true, outVisible: true }))
-      );
+    if (reducedMotion.current) {
       setIsDone(true);
       return undefined;
     }
 
-    let blockIndex = 0;
-    let charIndex = 0;
-    // Esta creando un espacio en blanco en la terminal con el comando y descripción
-    setRenderedBlocks(blocks.map(() => ({ command: '', out: [], commandDone: false, outVisible: false })));
+    let commandIndex = 0; // Cuando la Terminal de Comandos está funcionando
+    let phase = 'command'; // 'command' | 'pause' | 'output'
+    let charIndex = 0; // Cuantos caracteres de la línea actual han sido revelados
 
-    // Escribir la siguiente letra o caracter
-    function typeNextChar() {
-      if (blockIndex >= blocks.length) {
+    function tick() {
+      const cmd = blocks[commandIndex];
+      if (!cmd) {
+        // Todos los comandos escritos
         setIsDone(true);
         return;
       }
 
-      const currentBlock = blocks[blockIndex];
-
-      if (charIndex <= currentBlock.command.length) {
-        const partial = currentBlock.command.slice(0, charIndex);
-        setRenderedBlocks((prev) => {
-          const next = [...prev];
-          next[blockIndex] = { ...next[blockIndex], command: partial };
-          return next;
-        });
+      if (phase === 'command') {
         charIndex += 1;
-        timeoutRef.current = setTimeout(typeNextChar, CHAR_DELAY_MS);
-        return;
-      }
+        const done = charIndex >= cmd.command.length;
 
-      // Comando terminado de tipear: marcar done y mostrar la salida tras una pausa
-      setRenderedBlocks((prev) => {
-        const next = [...prev];
-        next[blockIndex] = { ...next[blockIndex], commandDone: true };
-        return next;
-      });
-
-      timeoutRef.current = setTimeout(() => {
-        setRenderedBlocks((prev) => {
-          const next = [...prev];
-          next[blockIndex] = { ...next[blockIndex], out: currentBlock.out, outVisible: true };
-          return next;
+        setProgress({
+          blockIndex: commandIndex,
+          charCount: done ? cmd.command.length : charIndex,
+          outVisible: false,
         });
-        blockIndex += 1;
+
+        if (done) {
+          phase = 'pause';
+          timeoutRef.current = setTimeout(tick, OUT_PAUSE_MS);
+        } else {
+          timeoutRef.current = setTimeout(tick, CHAR_DELAY_MS);
+        }
+      } else if (phase === 'pause') {
+        setProgress({
+          blockIndex: commandIndex,
+          charCount: cmd.command.length,
+          outVisible: true,
+        });
+
+        commandIndex += 1;
+        phase = 'command';
         charIndex = 0;
-        timeoutRef.current = setTimeout(typeNextChar, BLOCK_PAUSE_MS);
-      }, OUT_PAUSE_MS);
+
+        if (commandIndex >= blocks.length) {
+          setIsDone(true);
+        } else {
+          timeoutRef.current = setTimeout(() => {
+            setProgress({
+              blockIndex: commandIndex,
+              charCount: 0,
+              outVisible: false,
+            });
+            tick();
+          }, CHAR_DELAY_MS);
+        }
+      }
     }
 
-    timeoutRef.current = setTimeout(typeNextChar, CHAR_DELAY_MS);
+    // Terminar la animación
+    timeoutRef.current = setTimeout(tick, CHAR_DELAY_MS);
 
-    return () => clearTimeout(timeoutRef.current);
-    // 'blocks' viene de un módulo de datos estático: se ejecuta una sola vez al montar.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      if (timeoutRef.current !== null) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, []);
 
-  return { renderedBlocks, isDone };
+
+const renderedBlocks = useMemo(() => {
+  if (reducedMotion.current) {
+    return blocks.map((b) => ({ command: b.command, out: b.out, commandDone: true, outVisible: true }));
+  }
+
+  const result = [];
+
+  // Bloques ya completados: se muestran enteros, con su salida.
+  for (let i = 0; i < progress.blockIndex; i += 1) {
+    result.push({ command: blocks[i].command, out: blocks[i].out, commandDone: true, outVisible: true });
+  }
+
+  // Bloque actual (si queda alguno pendiente de animar).
+  if (progress.blockIndex < blocks.length) {
+    const current = blocks[progress.blockIndex];
+    result.push({
+      command: current.command.slice(0, progress.charCount),
+      commandDone: progress.charCount >= current.command.length,
+      out: progress.outVisible ? current.out : [],
+      outVisible: progress.outVisible,
+    });
+  }
+
+  return result;
+}, [blocks, progress]);
+
+return { renderedBlocks, isDone };
 }
