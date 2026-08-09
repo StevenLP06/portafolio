@@ -1,3 +1,4 @@
+import AmbientBackground from './components/layout/AmbientBackground.jsx';
 import Navbar from './components/layout/Navbar.jsx';
 import Hero from './components/hero/Hero.jsx';
 import AboutMe from './components/about/AboutMe.jsx';
@@ -11,7 +12,8 @@ import { CONTACT_INFO, SITE_META } from './constants/site.js';
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-bg-light text-ink-light dark:bg-bg dark:text-ink transition-colors duration-300">
+    <div className="min-h-screen text-ink-light dark:text-ink transition-colors duration-300">
+      <AmbientBackground />
       <Navbar />
 
       <main>

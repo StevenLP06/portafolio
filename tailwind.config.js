@@ -28,6 +28,7 @@ export default {
         cyan: '#4FD6C4', // acento primario
         magenta: '#E85D9E', // acento secundario
         amber: '#F5B841', // acento cálido (CTA / uso mínimo)
+        'glow-purple': '#7C5CFC',
       },
       fontFamily: {
         display: ['"Space Grotesk"', 'sans-serif'],
@@ -47,11 +48,21 @@ export default {
           '0%, 100%': { opacity: '0.6' },
           '50%': { opacity: '1' },
         },
+        'drift-a': {
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '50%': { transform: 'translate(30px, 20px) scale(1.05)' },
+        },
+        'drift-b': {
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '50%': { transform: 'translate(-25px, -15px) scale(1.05)' },
+        },
       },
       animation: {
         blink: 'blink 1s step-end infinite',
         'fade-in-up': 'fade-in-up 0.6s ease-out forwards',
         glow: 'glow 3s ease-in-out infinite',
+        'drift-a': 'drift-a 18s ease-in-out infinite',
+        'drift-b': 'drift-b 22s ease-in-out infinite',
       },
     },
   },

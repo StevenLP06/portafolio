@@ -1,5 +1,7 @@
-import { skillGroups } from '../../data/skills.js';
-import SkillGroup from './SkillGroup.jsx';
+import { SKILL_CATEGORIES } from '../../data/skills.js';
+// import SkillGroup from './SkillGroup.jsx';
+import SkillCard from './SkillCard.jsx';
+import './skills.css';
 
 export default function SkillsSection() {
   return (
@@ -10,8 +12,8 @@ export default function SkillsSection() {
       </h2>
 
       <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {skillGroups.map((group) => (
-          <SkillGroup key={group.id} group={group} />
+        {SKILL_CATEGORIES.map((cat) => (
+          <SkillCard key={cat.title} category={cat} />
         ))}
       </div>
     </div>
